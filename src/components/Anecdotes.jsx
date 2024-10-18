@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { addVote } from '../reducers/anecdoteReducer';
+import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-// eslint-disable-next-line react/prop-types
 const Anecdote = ({ anecdote }) => {
   const dispatch = useDispatch();
 
@@ -21,13 +21,48 @@ const Anecdote = ({ anecdote }) => {
 };
 
 const Anecdotes = () => {
-  const anecdotes = useSelector((state) => state);
+  const anecdotes = useSelector(({ anecdotes }) => anecdotes);
 
-  const anecdotesByVotes = anecdotes.sort((a, b) => b.votes - a.votes);
+  const filterString = useSelector(({ filter }) => filter);
 
-  return anecdotesByVotes.map((anecdote) => (
-    <Anecdote key={anecdote.id} anecdote={anecdote} />
-  ));
+  // if (filterString.length > 0) {
+  //   const filteredAnecdotes = anecdotes.filter((anecdote) =>
+  //     anecdote.content.toLowerCase().includes(filterString.toLowerCase())
+  //   );
+
+  //   return filteredAnecdotes.map((anecdote) => (
+  //     <Anecdote key={anecdote.id} anecdote={anecdote} />
+  //   ));
+  // }
+
+  // const anecdotesByVotes = [...anecdotes].sort((a, b) => b.votes - a.votes);
+
+  // return (
+  //   <ul>
+  //     {anecdotesByVotes.map((anecdote) => (
+  //       <Anecdote key={anecdote.id} anecdote={anecdote} />
+  //     ))}
+  //   </ul>
+  // );
+
+  // useMemo: El array se recalcula solo si anecdotes o filterString cambian.
+  const filteredOrSortedAnecdotes = useMemo(() => {
+    const filtered = filterString
+      ? anecdotes.filter((anecdote) =>
+          anecdote.content.toLowerCase().includes(filterString.toLowerCase())
+        )
+      : [...anecdotes];
+
+    return filtered.sort((a, b) => b.votes - a.votes);
+  }, [anecdotes, filterString]);
+
+  return (
+    <ul>
+      {filteredOrSortedAnecdotes.map((anecdote) => (
+        <Anecdote key={anecdote.id} anecdote={anecdote} />
+      ))}
+    </ul>
+  );
 };
 
 export default Anecdotes;
