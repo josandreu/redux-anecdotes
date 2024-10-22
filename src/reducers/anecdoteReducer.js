@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import anecdoteService from '../services/anecdotes';
 
 // const anecdotesAtStart = [
 //   'If it hurts, do it more often',
@@ -65,27 +66,63 @@ const anecdoteSlice = createSlice({
   name: 'anecdotes',
   initialState: [],
   reducers: {
-    addVote(state, action) {
-      const id = action.payload;
-      const anecdoteToChange = state.find((n) => n.id === id);
-      const changedAnecdoted = {
-        ...anecdoteToChange,
-        votes: anecdoteToChange.votes + 1,
-      };
+    // updateAnecdotes(state, action) {
+    //   const id = action.payload.id;
+    //   const changedAnecdoted = action.payload;
 
-      return state.map((anecdote) =>
-        anecdote.id === id ? changedAnecdoted : anecdote
+    //   return state.map((anecdote) =>
+    //     anecdote.id === id ? changedAnecdoted : anecdote
+    //   );
+    // },
+    // versión mejorada, Redux Toolkit utiliza immer bajo el capó, lo que permite mutaciones "inmutables".
+    updateAnecdotes(state, { payload }) {
+      const anecdoteIndex = state.findIndex(
+        (anecdote) => anecdote.id === payload.id
       );
+      if (anecdoteIndex !== -1) {
+        state[anecdoteIndex] = payload;
+      }
     },
-    newAnecdote(state, action) {
-      return state.concat(action.payload);
+    setAnecdotes(state, { payload }) {
+      return payload;
     },
-    setAnecdotes(state, action) {
-      return action.payload;
+    appendAnecdote(state, action) {
+      state.push(action.payload);
     },
   },
 });
 
-export const { addVote, newAnecdote, setAnecdotes } = anecdoteSlice.actions;
+export const initAnecdotes = () => async (dispatch) => {
+  const anecdotes = await anecdoteService.getAll();
+  dispatch(setAnecdotes(anecdotes));
+};
+
+export const newAnecdote = (content) => {
+  return async (dispatch) => {
+    const anecdote = await anecdoteService.addAnecdote(content);
+
+    dispatch(appendAnecdote(anecdote));
+  };
+};
+
+export const addVote = (content) => {
+  return async (dispatch, getState) => {
+    const id = content;
+    const { anecdotes } = getState();
+    const anecdoteToChange = anecdotes.find((n) => n.id === id);
+
+    const updatedAnecdote = {
+      ...anecdoteToChange,
+      votes: anecdoteToChange.votes + 1,
+    };
+
+    const response = await anecdoteService.addVote(updatedAnecdote);
+
+    dispatch(updateAnecdotes(response));
+  };
+};
+
+export const { updateAnecdotes, setAnecdotes, appendAnecdote } =
+  anecdoteSlice.actions;
 
 export default anecdoteSlice.reducer;
