@@ -54,6 +54,21 @@
       "id": "1247",
       "content": "A query is a declarative dependency on an asynchronous source of data that is tied to a unique key",
       "votes": 0
+    },
+    {
+      "id": "1240",
+      "content": "If your method modifies data on the server, we recommend using Mutations instead.",
+      "votes": 0
+    },
+    {
+      "id": "6fa7",
+      "content": "If booleans aren't your thing, you can always use the status state as well",
+      "votes": 0
+    },
+    {
+      "id": "13f5",
+      "content": "So keep in mind that a query can be in pending state without actually fetching data",
+      "votes": 2
     }
   ]
 }

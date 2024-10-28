@@ -1,3 +1,9 @@
+/*
+Reducer Redux para el manejo del estado de las notificaciones, uso con useSelector
+
+No lo usamos, se ha reemplazado por useReducer. Lo dejamos a modo de ejemplo
+*/
+
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = 'Initial notification';

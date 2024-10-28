@@ -1,14 +1,17 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 // import { addVote } from '../reducers/anecdoteReducer';
-import { showNotificationWithTimeout } from '../reducers/notificationReducer';
+// import { showNotificationWithTimeout } from '../reducers/notificationReducer';
 import anecdoteService from '../services/anecdotes.js';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNotification } from '../useNotification';
 
 const Anecdote = ({ anecdote }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+
+  const { showNotification } = useNotification();
 
   const queryClient = useQueryClient();
 
@@ -18,7 +21,11 @@ const Anecdote = ({ anecdote }) => {
       queryClient.invalidateQueries(['anecdotes']);
     },
     onError: () => {
-      dispatch(showNotificationWithTimeout(`Error submitting vote`));
+      /*
+      En lugar de Redux vamos a utilizar useReducer
+      */
+      // dispatch(showNotificationWithTimeout(`Error submitting vote`));
+      showNotification('Error submitting vote', 'error');
     },
   });
 
@@ -36,9 +43,14 @@ const Anecdote = ({ anecdote }) => {
     };
 
     newAddVoteMutation.mutate(updatedAnecdote);
-    dispatch(
-      showNotificationWithTimeout(`You voted: ${updatedAnecdote.content}`)
-    );
+
+    /*
+      En lugar de Redux vamos a utilizar useReducer
+      */
+    // dispatch(
+    //   showNotificationWithTimeout(`You voted: ${updatedAnecdote.content}`)
+    // );
+    showNotification(`You voted: ${updatedAnecdote.content}`);
   };
 
   return (

@@ -3,11 +3,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import anecdoteService from '../services/anecdotes.js';
 // import { newAnecdote } from '../reducers/anecdoteReducer';
 import { showNotificationWithTimeout } from '../reducers/notificationReducer';
+import { useNotification } from '../useNotification';
 
 const NewAnecdote = () => {
   const dispatch = useDispatch();
 
   const queryClient = useQueryClient();
+
+  const { showNotification } = useNotification();
 
   const newAnecdoteMutation = useMutation({
     mutationFn: anecdoteService.addAnecdote,
@@ -16,9 +19,14 @@ const NewAnecdote = () => {
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote));
     },
     onError: () => {
-      dispatch(
-        showNotificationWithTimeout(`Error submitting anecdote`, 'error')
-      );
+      /*
+      En lugar de Redux vamos a utilizar useReducer
+      */
+      // dispatch(
+      //   showNotificationWithTimeout(`Error submitting anecdote`, 'error')
+      // );
+
+      showNotification(`Error submitting anecdote`, 'error');
     },
   });
 
@@ -28,12 +36,17 @@ const NewAnecdote = () => {
     event.target.anecdote.value = '';
 
     if (anecdote.length < 5) {
-      dispatch(
-        showNotificationWithTimeout(
-          `Content must be at least 5 characters long.`,
-          'error'
-        )
-      );
+      /*
+      En lugar de Redux vamos a utilizar useReducer
+      */
+      // dispatch(
+      //   showNotificationWithTimeout(
+      //     `Content must be at least 5 characters long.`,
+      //     'error'
+      //   )
+      // );
+
+      showNotification(`Content must be at least 5 characters long.`, 'error');
       return;
     }
 
