@@ -12,9 +12,6 @@ const notificationSlice = createSlice({
     clearNotification() {
       return '';
     },
-    setNotificationClass(state, action) {
-      return action.payload;
-    },
   },
 });
 

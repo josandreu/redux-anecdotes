@@ -16,7 +16,9 @@ const NewAnecdote = () => {
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote));
     },
     onError: () => {
-      dispatch(showNotificationWithTimeout(`Error submitting anecdote`));
+      dispatch(
+        showNotificationWithTimeout(`Error submitting anecdote`, 'error')
+      );
     },
   });
 
@@ -28,7 +30,8 @@ const NewAnecdote = () => {
     if (anecdote.length < 5) {
       dispatch(
         showNotificationWithTimeout(
-          `Content must be at least 5 characters long.`
+          `Content must be at least 5 characters long.`,
+          'error'
         )
       );
       return;
