@@ -1,17 +1,17 @@
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+// import { useEffect } from 'react';
+// import { useDispatch } from 'react-redux';
 import Anecdotes from './components/Anecdotes';
 import NewAnecdote from './components/NewAnecdote';
 import Notification from './components/Notification';
 import SearchFilter from './components/SearchFilter';
-import { initAnecdotes } from './reducers/anecdoteReducer';
+// import { initAnecdotes } from './reducers/anecdoteReducer';
 
 const App = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(initAnecdotes());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(initAnecdotes());
+  // }, [dispatch]);
 
   return (
     <div>

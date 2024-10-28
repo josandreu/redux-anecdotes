@@ -3,7 +3,7 @@
     {
       "content": "If it hurts, do it more often",
       "id": "47145",
-      "votes": 1
+      "votes": 2
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
@@ -23,12 +23,12 @@
     {
       "content": "Premature optimization is the root of all evil.",
       "id": "25170",
-      "votes": 0
+      "votes": 1
     },
     {
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
       "id": "98312",
-      "votes": 0
+      "votes": 5
     },
     {
       "id": "6c1d",
@@ -38,7 +38,7 @@
     {
       "content": "My farm has many animals",
       "id": "2a51",
-      "votes": 1
+      "votes": 2
     },
     {
       "id": "2c00",
@@ -48,7 +48,7 @@
     {
       "id": "3084",
       "content": "We can also change the json-server port and simulate like a third party API",
-      "votes": 1
+      "votes": 2
     }
   ]
 }

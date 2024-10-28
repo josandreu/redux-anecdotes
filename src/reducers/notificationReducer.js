@@ -6,19 +6,26 @@ const notificationSlice = createSlice({
   name: 'notification',
   initialState: initialState,
   reducers: {
-    setNotification(state, action) {
-      return action.payload;
+    setNotification(state, { payload }) {
+      return payload;
     },
     clearNotification() {
       return '';
+    },
+    setNotificationClass(state, action) {
+      return action.payload;
     },
   },
 });
 
 // Thunk para manejar notificaciones temporales
-export const showNotificationWithTimeout = (message, timeout = 5000) => {
+export const showNotificationWithTimeout = (
+  message,
+  className,
+  timeout = 5000
+) => {
   return (dispatch) => {
-    dispatch(setNotification(message));
+    dispatch(setNotification({ message: message, className: className }));
 
     setTimeout(() => {
       dispatch(clearNotification());

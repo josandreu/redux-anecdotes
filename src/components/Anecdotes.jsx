@@ -1,17 +1,44 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { addVote } from '../reducers/anecdoteReducer';
+// import { addVote } from '../reducers/anecdoteReducer';
 import { showNotificationWithTimeout } from '../reducers/notificationReducer';
+import anecdoteService from '../services/anecdotes.js';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const Anecdote = ({ anecdote }) => {
   const dispatch = useDispatch();
 
+  const queryClient = useQueryClient();
+
+  const newAddVoteMutation = useMutation({
+    mutationFn: anecdoteService.addVote,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['anecdotes']);
+    },
+    onError: () => {
+      dispatch(showNotificationWithTimeout(`Error submitting vote`));
+    },
+  });
+
   const { content, votes, id } = anecdote;
 
   const vote = (id) => {
-    dispatch(addVote(id));
-    dispatch(showNotificationWithTimeout(`You voted: ${content}`));
+    //dispatch(addVote(id));
+    const anecdotes = queryClient.getQueryData(['anecdotes']);
+
+    const anecdoteToChange = anecdotes.find((anecdote) => anecdote.id === id);
+
+    const updatedAnecdote = {
+      ...anecdoteToChange,
+      votes: anecdoteToChange.votes + 1,
+    };
+
+    newAddVoteMutation.mutate(updatedAnecdote);
+    dispatch(
+      showNotificationWithTimeout(`You voted: ${updatedAnecdote.content}`)
+    );
   };
 
   return (
@@ -23,40 +50,55 @@ const Anecdote = ({ anecdote }) => {
 };
 
 const Anecdotes = () => {
-  const anecdotes = useSelector(({ anecdotes }) => anecdotes);
+  /*
+  Este reducer ya no lo utilizamos, hacemos uso de React Query
+  */
+  // const anecdotes = useSelector(({ anecdotes }) => anecdotes);
 
+  // Fetch anecdotes using React Query
+  const {
+    data: anecdotes = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['anecdotes'],
+    queryFn: anecdoteService.getAll,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  /* 
+  Memoize filtered and sorted anecdotes 
+  */
   const filterString = useSelector(({ filter }) => filter);
 
-  // if (filterString.length > 0) {
-  //   const filteredAnecdotes = anecdotes.filter((anecdote) =>
-  //     anecdote.content.toLowerCase().includes(filterString.toLowerCase())
-  //   );
-
-  //   return filteredAnecdotes.map((anecdote) => (
-  //     <Anecdote key={anecdote.id} anecdote={anecdote} />
-  //   ));
-  // }
-
-  // const anecdotesByVotes = [...anecdotes].sort((a, b) => b.votes - a.votes);
-
-  // return (
-  //   <ul>
-  //     {anecdotesByVotes.map((anecdote) => (
-  //       <Anecdote key={anecdote.id} anecdote={anecdote} />
-  //     ))}
-  //   </ul>
-  // );
-
-  // useMemo: El array se recalcula solo si anecdotes o filterString cambian.
+  /* 
+  useMemo: El array se recalcula solo si anecdotes o filterString cambian.
+  Memoize filtered and sorted anecdotes
+  */
   const filteredOrSortedAnecdotes = useMemo(() => {
     const filtered = filterString
       ? anecdotes.filter((anecdote) =>
           anecdote.content.toLowerCase().includes(filterString.toLowerCase())
         )
-      : [...anecdotes];
+      : anecdotes;
 
-    return filtered.sort((a, b) => b.votes - a.votes);
+    // Sort anecdotes by votes
+    return filtered.slice().sort((a, b) => b.votes - a.votes);
   }, [anecdotes, filterString]);
+
+  if (isLoading) {
+    return <div>Loading data...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading anecdotes {error.message}</div>;
+  }
+
+  if (!anecdotes || anecdotes.length === 0) {
+    return <div>No anecdotes available</div>;
+  }
 
   return (
     <ul>

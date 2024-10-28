@@ -74,7 +74,9 @@ const anecdoteSlice = createSlice({
     //     anecdote.id === id ? changedAnecdoted : anecdote
     //   );
     // },
-    // versión mejorada, Redux Toolkit utiliza immer bajo el capó, lo que permite mutaciones "inmutables".
+    /*
+    Reducer versión mejorada, Redux Toolkit utiliza immer bajo el capó, lo que permite mutaciones "inmutables".
+    */
     updateAnecdotes(state, { payload }) {
       const anecdoteIndex = state.findIndex(
         (anecdote) => anecdote.id === payload.id
@@ -92,11 +94,18 @@ const anecdoteSlice = createSlice({
   },
 });
 
+/*
+Función que crea un reducer para obtener mediante useEffect las anecdotas del servidor en cada renderizado
+Mantenemos la función, pero no lo usamos, hacemos lo mismo con React Query
+*/
 export const initAnecdotes = () => async (dispatch) => {
   const anecdotes = await anecdoteService.getAll();
   dispatch(setAnecdotes(anecdotes));
 };
 
+/*
+Mantenemos la función, pero no lo usamos, hacemos lo mismo con React Query
+*/
 export const newAnecdote = (content) => {
   return async (dispatch) => {
     const anecdote = await anecdoteService.addAnecdote(content);
@@ -105,6 +114,9 @@ export const newAnecdote = (content) => {
   };
 };
 
+/*
+Mantenemos la función, pero no lo usamos, hacemos lo mismo con React Query
+*/
 export const addVote = (content) => {
   return async (dispatch, getState) => {
     const id = content;
